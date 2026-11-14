@@ -2,6 +2,9 @@ import { randomUUID } from "node:crypto";
 import type { Store } from "../db";
 import type { AnalysisRecord, InputIdentity, ProviderSettings } from "./contracts";
 import { ADHERENCE_MIGRATION_NAME, ADHERENCE_MIGRATION_SQL } from "./migrations/001-adherence";
+import { REVIEW_MIGRATION_NAME, REVIEW_MIGRATION_SQL } from "./migrations/002-review";
+
+export type HumanReview = { id: string; analysisId: string; inputHash: string; decision: "agree" | "disagree"; note: string; createdAt: string };
 
 export type AnalysisClaim = { record: AnalysisRecord; token: string | null; created: boolean; busy: boolean };
 export class AdherenceRepository {
@@ -9,6 +12,8 @@ export class AdherenceRepository {
     this.transaction(() => {
       store.db.exec(ADHERENCE_MIGRATION_SQL);
       store.db.prepare("INSERT OR IGNORE INTO adherence_migrations(name,applied_at) VALUES (?,?)").run(ADHERENCE_MIGRATION_NAME, new Date().toISOString());
+      store.db.exec(REVIEW_MIGRATION_SQL);
+      store.db.prepare("INSERT OR IGNORE INTO adherence_migrations(name,applied_at) VALUES (?,?)").run(REVIEW_MIGRATION_NAME, new Date().toISOString());
     });
   }
   private transaction<T>(work: () => T): T {
@@ -33,6 +38,16 @@ export class AdherenceRepository {
   }
   history(opportunityId: string, limit = 20): AnalysisRecord[] {
     return this.store.db.prepare("SELECT payload_json FROM adherence_analyses WHERE opportunity_id=? ORDER BY rowid DESC LIMIT ?").all(opportunityId, Math.max(1, Math.min(limit, 100))).map((row) => JSON.parse(String(row.payload_json)));
+  }
+  reviews(analysisId: string): HumanReview[] {
+    return this.store.db.prepare("SELECT id,analysis_id,input_hash,decision,note,created_at FROM adherence_reviews WHERE analysis_id=? ORDER BY created_at DESC, rowid DESC LIMIT 30").all(analysisId).map((row) => ({ id: String(row.id), analysisId: String(row.analysis_id), inputHash: String(row.input_hash), decision: row.decision as HumanReview["decision"], note: String(row.note), createdAt: String(row.created_at) }));
+  }
+  saveReview(record: AnalysisRecord, decision: HumanReview["decision"], note: string): HumanReview {
+    if (record.status !== "validated" || record.validation.status !== "approved") throw new Error("Evidências ainda não aprovadas.");
+    if (decision === "disagree" && !note.trim()) throw new Error("Explique a discordância.");
+    const review = { id: randomUUID(), analysisId: record.id, inputHash: record.inputHash, decision, note, createdAt: new Date().toISOString() };
+    this.store.db.prepare("INSERT INTO adherence_reviews(id,analysis_id,input_hash,decision,note,created_at) VALUES (?,?,?,?,?,?)").run(review.id, review.analysisId, review.inputHash, review.decision, review.note, review.createdAt);
+    return review;
   }
   private write(record: AnalysisRecord) {
     this.store.db.prepare("UPDATE adherence_analyses SET status=?,payload_json=? WHERE id=?").run(record.status, JSON.stringify(record), record.id);
