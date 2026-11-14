@@ -20,3 +20,7 @@ Faltam seção de prompt de evidências, validador real, registro de revisão, a
 `modelOutputSchema` contém `classification`, `justification`, `matchedCriteria`, `conflictingCriteria`, `evidence` e `missingInformation`; a versão atual é `adherence-proposal.v1`. Cada evidência usa `field: "description"` e `excerpt` literal. Nenhum outro campo pode ser citado nesta versão, inclusive `additionalInformation` e anexos. O servidor preenche ID, modelo, data, versão do perfil, prompt e hashes. `opportunityHash` representa a projeção analisada, enquanto `sourceRecordHash` preserva o hash integral do registro de origem. O contrato já comporta a primeira entrega sem ampliar campos.
 
 Este documento é o handoff versionado para a equipe; mudanças nos campos citáveis exigem nova versão do esquema e testes de integração.
+
+## T04 — Revisão do esquema
+
+`analysisResultSchema` exige classificação do domínio, justificativa limitada, até 20 evidências literais de `description` e até 30 lacunas. `modelOutputSchema` acrescenta listas limitadas de critérios e usa `.strict()`, recusando metadados enviados pelo modelo. O servidor valida o resultado novamente após adicionar modelo, data, perfil, ID e hash. Não há lacuna de formato para esta entrega; nenhum campo ou versão foi alterado.
