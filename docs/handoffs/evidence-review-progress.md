@@ -36,3 +36,7 @@ A suíte `tests/adherence.test.ts` passou cobrindo `pending_validation`, `valida
 ## T12 — Registro de revisão humana
 
 Cada decisão é uma nova linha com `analysisId`, `inputHash`, `decision` (`agree`/`disagree`), `note` e `createdAt`. O histórico é append only, vinculado à análise original; não altera JSON nem status da análise. Uma discordância exige observação. A ação só aceita análise atual com evidências aprovadas e recusa ID antigo ou de outra oportunidade. Não há autenticação neste projeto; portanto o registro não identifica uma pessoa verificada e esse limite deve aparecer na interface.
+
+## T18 — Verificação do fluxo local
+
+`npm run check` passou: typecheck, lint, 94 testes e build. Com o servidor de produção ativo em `127.0.0.1:3100`, `npm run smoke -- --url http://127.0.0.1:3100` passou nas 12 verificações HTTP. Os testes cobrem persistência, recarga, stale e uma instrução maliciosa sintética como citação inventada. A interface foi compilada e a página de detalhe respondeu. Sem `OPENAI_API_KEY`, não houve geração externa; esta verificação não mede a qualidade das respostas do modelo nem conclui um fluxo visual com navegador.
