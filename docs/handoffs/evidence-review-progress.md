@@ -32,3 +32,7 @@ Este documento é o handoff versionado para a equipe; mudanças nos campos citá
 ## T11 — Estados da integração
 
 A suíte `tests/adherence.test.ts` passou cobrindo `pending_validation`, `validated`, `rejected`, `stale`, revalidação sem nova geração e invalidação por alteração de perfil, oportunidade, prompt, esquema e versão do validador. O estado `validated` representa aprovação das evidências; revisão humana fica em registro separado.
+
+## T12 — Registro de revisão humana
+
+Cada decisão é uma nova linha com `analysisId`, `inputHash`, `decision` (`agree`/`disagree`), `note` e `createdAt`. O histórico é append only, vinculado à análise original; não altera JSON nem status da análise. Uma discordância exige observação. A ação só aceita análise atual com evidências aprovadas e recusa ID antigo ou de outra oportunidade. Não há autenticação neste projeto; portanto o registro não identifica uma pessoa verificada e esse limite deve aparecer na interface.
