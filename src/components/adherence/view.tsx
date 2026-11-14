@@ -6,7 +6,7 @@ import styles from "./adherence.module.css";
 export const classificationLabels = { possivel_aderencia: "Possível aderência", fora_do_perfil: "Fora do perfil", precisa_de_revisao: "Precisa de revisão" } as const;
 export const analysisStateLabels: Record<AnalysisState, string> = {
   not_configured: "Não analisada · IA não configurada", not_analyzed: "Não analisada", processing: "Processando análise",
-  pending_validation: "Pendente de validação", validated: "Análise validada", rejected: "Validação rejeitada", failed: "Falha na análise", stale: "Análise desatualizada",
+  pending_validation: "Pendente de validação", validated: "Evidências aprovadas", rejected: "Validação rejeitada", failed: "Falha na análise", stale: "Análise desatualizada",
 };
 export function AnalysisStatusBadge({ view }: { view: AnalysisView }) {
   const final = view.state === "validated" && view.stages.evidenceApproved && view.result;
@@ -24,7 +24,7 @@ export function AdherenceContent({ view }: { view: AnalysisView }) {
     {view.state === "stale" ? <p className={styles.notice}>Os dados, o perfil ou a configuração da análise mudaram. O resultado anterior está desatualizado.</p> : null}
     {view.state === "failed" && view.failure ? <p className={styles.failure} role="alert">{failureMessages[view.failure.code]}</p> : null}
     {visibleResult ? <div className={styles.result}>
-      <span className={styles.label}>{view.state === "validated" ? "Classificação validada" : view.state === "stale" ? "Classificação anterior · desatualizada" : "Classificação preliminar"}</span>
+      <span className={styles.label}>{view.state === "validated" ? "Classificação com evidências aprovadas" : view.state === "stale" ? "Classificação anterior · desatualizada" : "Classificação preliminar"}</span>
       <h3>{classificationLabels[view.result!.classification]}</h3>
       <h4>Justificativa</h4><p>{view.result!.justification}</p>
       <h4>Critérios atendidos</h4>{view.result!.matchedCriteria.length ? <ul>{view.result!.matchedCriteria.map((text, i) => <li key={i}>{text}</li>)}</ul> : <p>Nenhum critério informado pelo modelo.</p>}

@@ -26,3 +26,8 @@
 .review ul { padding-left:17px; margin:6px 0; font-size:11px; line-height:1.7; color:#657c8f; overflow-wrap:anywhere; }
 .review li { margin-bottom:7px; }
 .review small { display:block; color:#8092a1; }
+
+.reviewForm { display:grid; gap:8px; margin-top:14px; }
+.reviewForm label { font-size:11px; color:#3f5c73; }
+.reviewForm textarea { width:100%; padding:9px; border:1px solid #ccd7df; border-radius:5px; resize:vertical; font:inherit; }
+.reviewButtons { display:flex; gap:8px; flex-wrap:wrap; }
