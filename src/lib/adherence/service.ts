@@ -6,7 +6,7 @@ import { modelOutputSchema, OUTPUT_SCHEMA_VERSION, type AdherenceProvider, type 
 import { AdherenceError, safeFailure } from "./errors";
 import { canonicalJson, contentHash, prepareInputs } from "./inputs";
 import { composePrompt } from "./prompt";
-import { AdherenceRepository } from "./repository";
+import { AdherenceRepository, type HumanReview } from "./repository";
 
 const semanticDecisionSchema = z.object({ status: z.enum(["approved", "rejected", "unavailable"]), codes: z.array(z.string().regex(/^[a-z][a-z0-9_.-]{0,63}$/)).max(20) });
 const MAX_RAW_RESPONSE_CHARS = 32000;
@@ -63,6 +63,13 @@ export class OpportunityAdherenceService {
       this.repository.recoverExpired(item.id, this.now());
       return [item.id, this.toView(identity, this.choose(identity))];
     }));
+  }
+  review(id: string, analysisId: string, decision: HumanReview["decision"], note: string): HumanReview {
+    const view = this.getView(id);
+    if (view.state !== "validated" || view.analysisId !== analysisId) throw new AdherenceError("stale");
+    const record = this.repository.get(analysisId);
+    if (!record?.result) throw new AdherenceError("not_found");
+    return this.repository.saveReview(record, decision, note);
   }
   async analyze(id: string): Promise<AnalysisView> {
     const identity = this.identity(id);
