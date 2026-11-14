@@ -21,3 +21,8 @@
 .actions button { width:100%; white-space:normal; }
 .panel .failure { padding:10px; border:1px solid #f0d8d0; background:#fff3ee; border-radius:5px; color:#953e2d; margin-top:13px; }
 .panel .integrationNote { font-size:10px; color:#88794e; }
+.review { border-top:1px solid #e5ebf0; margin-top:18px; padding-top:14px; }
+.review h3 { font-size:11px; margin:13px 0 7px; color:#3f5c73; }
+.review ul { padding-left:17px; margin:6px 0; font-size:11px; line-height:1.7; color:#657c8f; overflow-wrap:anywhere; }
+.review li { margin-bottom:7px; }
+.review small { display:block; color:#8092a1; }

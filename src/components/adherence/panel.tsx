@@ -27,7 +27,7 @@ export function AdherencePanel({ opportunityId, view, children }: { opportunityI
       {view.analysisId ? <input type="hidden" name="analysisId" value={view.analysisId}/> : null}
       {view.state !== "pending_validation" ? <button name="operation" value="analyze" className="button button-primary" disabled={busy || !view.configured}><Icon name={busy ? "refresh" : "sparkles"} size={16} className={busy ? "spin" : undefined}/>{busy ? "Analisando…" : view.state === "failed" ? "Tentar novamente" : view.state === "stale" ? "Analisar dados atuais" : view.state === "rejected" ? "Analisar novamente" : "Analisar aderência"}</button> : null}
       {(view.state === "pending_validation" || view.state === "rejected") ? <button name="operation" value="validate" className="button button-secondary" disabled={busy || !view.canValidate}>Validar resultado armazenado</button> : null}
-      {view.state === "pending_validation" && !view.canValidate ? <p className={styles.integrationNote}>Aguardando a integração do validador de evidências. O resultado foi preservado e poderá ser validado sem nova chamada ao modelo.</p> : null}
+      {view.state === "pending_validation" && !view.canValidate ? <p className={styles.integrationNote}>A validação de evidências não foi concluída. O resultado permanece preliminar.</p> : null}
     </form>
     {actionState.failure ? <p role="alert" className={styles.failure}>{failureMessages[actionState.failure.code]}</p> : null}
     {/* Ponto de composição: painéis de evidências e revisão humana do colega 1. */}
