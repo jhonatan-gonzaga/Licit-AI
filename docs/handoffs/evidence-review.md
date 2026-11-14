@@ -15,6 +15,8 @@ Branch `feat/evidence-review`. O contrato de saída existente permanece igual: `
 
 Um fluxo HTTP isolado foi conferido com banco temporário e resposta simulada: a página exibiu trechos e formulário; discordância sem observação retornou erro e não gravou; concordância gravou uma revisão; após alterar o perfil, a página ocultou o formulário, preservou o histórico e rejeitou o envio antigo sem criar outra revisão.
 
+A gravação local em `artifacts/evidence-review-demo.mp4` documenta o fluxo de revisão no navegador com resposta **simulada**. Foram salvas discordância com observação e concordância, o histórico reapareceu após recarga, e a mudança do perfil exibiu análise desatualizada.
+
 Uma citação literal pode existir e ainda ser irrelevante; revisão humana continua necessária. `additionalInformation`, anexos e itens não são fontes citáveis nesta versão. Ampliar campos exige nova versão do contrato, prompt e testes. A revisão fica restrita ao uso local atual, sem autenticação.
 
 ## Falha encontrada e corrigida
