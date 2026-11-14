@@ -54,7 +54,40 @@ test("migração aditiva preserva perfil, oportunidades, seleções, anotações
   new AdherenceRepository(store); new AdherenceRepository(store);
   assert.deepEqual(store.getProfile(), profile); assert.deepEqual(store.getOpportunity(id), opportunity);
   assert.equal(store.db.prepare("SELECT COUNT(*) AS count FROM schema_migrations").get()!.count, 1);
-  assert.equal(store.db.prepare("SELECT COUNT(*) AS count FROM adherence_migrations").get()!.count, 1);
+  assert.equal(store.db.prepare("SELECT COUNT(*) AS count FROM adherence_migrations").get()!.count, 2);
+});
+test("revisão humana persiste sem alterar a análise original", async () => {
+  const directory = mkdtempSync(join(tmpdir(), "licitai-review-")); directories.push(directory);
+  const path = join(directory, "review.sqlite");
+  const store = storeAt(path); const analysis = service(store, fakeProvider(), approved);
+  const view = await analysis.analyze(id); const before = analysis.repository.get(view.analysisId!)!;
+  const saved = analysis.repository.saveReview(before, "disagree", "Conferir o item do edital.");
+  assert.equal(analysis.repository.reviews(before.id)[0].note, saved.note);
+  assert.throws(() => analysis.repository.saveReview(before, "disagree", " "), /Explique a discordância/);
+  analysis.repository.saveReview(before, "agree", "");
+  assert.equal(analysis.repository.reviews(before.id).length, 2);
+  assert.deepEqual(analysis.repository.get(before.id), before);
+  store.close(); stores.splice(stores.indexOf(store), 1);
+  const reopened = new Store(path); stores.push(reopened);
+  const repository = new AdherenceRepository(reopened);
+  assert.deepEqual(repository.reviews(before.id).map((item) => item.decision), ["agree", "disagree"]);
+  assert.deepEqual(repository.get(before.id), before);
+});
+test("análise preliminar não aceita registro de revisão", async () => {
+  const analysis = service(storeAt(), fakeProvider());
+  const view = await analysis.analyze(id);
+  const record = analysis.repository.get(view.analysisId!)!;
+  assert.throws(() => analysis.repository.saveReview(record, "agree", ""), /Evidências ainda não aprovadas/);
+  assert.deepEqual(analysis.repository.reviews(record.id), []);
+});
+test("revisão recusa resultado desatualizado e ID de outra análise", async () => {
+  const store = storeAt(); const analysis = service(store, fakeProvider(), approved);
+  const view = await analysis.analyze(id);
+  assert.throws(() => analysis.review(id, "00000000-0000-4000-8000-000000000000", "agree", ""), /entradas mudaram/i);
+  store.saveProfile({ ...store.getProfile(), description: "Perfil alterado para invalidar a análise." });
+  assert.equal(analysis.getView(id).state, "stale");
+  assert.throws(() => analysis.review(id, view.analysisId!, "agree", ""), /entradas mudaram/i);
+  assert.deepEqual(analysis.repository.reviews(view.analysisId!), []);
 });
 test("sem chave não chama provedor nem cria execução comercial", async () => {
   const provider = fakeProvider(); provider.configured = false;
