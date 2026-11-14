@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "notice": "Cinco descrições públicas reais da amostra PNCP. Trechos e lacunas são hipóteses de teste do validador, não respostas de modelo nem avaliações humanas.",
+  "sampleFile": "data/pncp-sample.json",
+  "cases": [
+    {
+      "opportunityId": "57522468000163-1-000227/2026",
+      "excerpt": "computadores",
+      "missingInformation": [],
+      "reviewStatus": "pending_human_review",
+      "proposedClassification": "possivel_aderencia",
+      "expectedValidation": "approved"
+    },
+    {
+      "opportunityId": "03659166002156-1-000159/2026",
+      "excerpt": "alimentos hortifrutigranjeiros",
+      "missingInformation": [],
+      "reviewStatus": "pending_human_review",
+      "proposedClassification": "fora_do_perfil",
+      "expectedValidation": "approved"
+    },
+    {
+      "opportunityId": "00394452000103-1-024299/2026",
+      "excerpt": "Manutenção de Viaturas",
+      "missingInformation": [],
+      "reviewStatus": "pending_human_review",
+      "proposedClassification": "fora_do_perfil",
+      "expectedValidation": "approved"
+    },
+    {
+      "opportunityId": "07722779000106-1-000144/2026",
+      "excerpt": null,
+      "missingInformation": [
+        "Identificar os materiais permanentes solicitados."
+      ],
+      "reviewStatus": "pending_human_review",
+      "proposedClassification": "precisa_de_revisao",
+      "expectedValidation": "approved"
+    },
+    {
+      "opportunityId": "60453032000174-1-000310/2026",
+      "excerpt": "Impressoras 3D",
+      "missingInformation": [
+        "Confirmar se impressoras 3D fazem parte do catálogo da empresa."
+      ],
+      "reviewStatus": "pending_human_review",
+      "proposedClassification": "precisa_de_revisao",
+      "expectedValidation": "approved"
+    }
+  ]
+}
